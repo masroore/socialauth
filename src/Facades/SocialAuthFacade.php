@@ -1,20 +1,18 @@
 <?php
 
-namespace Masroore\SocialAuth;
+namespace Masroore\SocialAuth\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Masroore\SocialAuth\Skeleton\SkeletonClass
+ * @see \Masroore\SocialAuth\SocialAuth
  */
 class SocialAuthFacade extends Facade
 {
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'socialauth';
     }

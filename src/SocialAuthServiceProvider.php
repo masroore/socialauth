@@ -3,9 +3,23 @@
 namespace Masroore\SocialAuth;
 
 use Illuminate\Support\ServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 
 class SocialAuthServiceProvider extends ServiceProvider
 {
+    public const PACKAGE_NAME = 'socialauth';
+
+    public function configurePackage(Package $package): void
+    {
+        $package
+            ->name(self::PACKAGE_NAME)
+            ->hasConfigFile()
+            ->hasTranslations()
+            ->hasViews()
+            ->hasRoute('web')
+            ->hasMigration('create_social_accounts_table');
+    }
+
     /**
      * Bootstrap the application services.
      */
@@ -19,7 +33,7 @@ class SocialAuthServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../config/config.php' => config_path('socialauth.php'),
+                __DIR__ . '/../config/config.php' => config_path(self::PACKAGE_NAME . '.php'),
             ], 'config');
 
             // Publishing the views.
@@ -48,9 +62,9 @@ class SocialAuthServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'socialauth');
+        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', self::PACKAGE_NAME);
 
         // Register the main class to use with the facade
-        $this->app->singleton('socialauth', fn () => new SocialAuth());
+        $this->app->singleton(self::PACKAGE_NAME, fn () => new SocialAuth());
     }
 }
