@@ -5,6 +5,7 @@ namespace Masroore\SocialAuth\Services;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Contracts\User as OAuthUserContract;
+use Masroore\SocialAuth\Facades\SocialAuth;
 
 final class UserManager
 {

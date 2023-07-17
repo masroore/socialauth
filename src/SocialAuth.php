@@ -42,9 +42,8 @@ final class SocialAuth
     public static function retrieveOauthUser(string $provider): OAuthUserContract
     {
         $socialUser = Socialite::driver($provider)->user();
-        $socialUser = self::generateMissingEmails($provider, $socialUser);
 
-        return $socialUser;
+        return self::generateMissingEmails($provider, $socialUser);
     }
 
     private static function generateMissingEmails(string $provider, OAuthUserContract $socialUser): OAuthUserContract
