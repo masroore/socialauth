@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @see \Masroore\SocialAuth\SocialAuth
  */
-class SocialAuthFacade extends Facade
+class SocialAuth extends Facade
 {
     /**
      * Get the registered name of the component.
      */
     protected static function getFacadeAccessor(): string
     {
-        return 'socialauth';
+        return \Masroore\SocialAuth\SocialAuth::PACKAGE_NAME;
     }
 }

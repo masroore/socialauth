@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Masroore\SocialAuth\RedirectPath;
 
 class LoginResponse implements Responsable
 {
@@ -18,6 +19,6 @@ class LoginResponse implements Responsable
     {
         return $request->wantsJson()
             ? new JsonResponse([], 204)
-            : redirect()->intended(RouteServiceProvider::HOME);
+            : redirect()->intended(RedirectPath::for('login', 'login'));
     }
 }

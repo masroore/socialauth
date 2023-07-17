@@ -1,5 +1,7 @@
 <?php
 
+use Masroore\SocialAuth\Enums\Feature;
+
 return [
 
     'domain' => env('APP_DOMAIN', 'localhost'),
@@ -26,9 +28,14 @@ return [
     ],
 
     'features' => [
-        'registration',
-        'profile_photo',
-        'xxx',
+        Feature::Registration->value,
+        Feature::GenerateMissingEmails->value,
+        Feature::CreateAccountOnFirstLogin->value,
+        Feature::LoginOnRegistration->value,
+        Feature::ProfilePhoto->value,
+        Feature::UpdateProfile->value,
+        Feature::RefreshOauthTokens->value,
+        Feature::RememberSession->value,
     ],
 
     'paths' => [

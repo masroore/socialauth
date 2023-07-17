@@ -2,13 +2,14 @@
 
 namespace Masroore\SocialAuth\Services;
 
+use Masroore\SocialAuth\Enums\Feature;
 use Masroore\SocialAuth\SocialAuth;
 
 final class Features
 {
     public static function generateMissingEmails(): bool
     {
-        return self::enabled('generate-missing-emails');
+        return self::enabled(Feature::GenerateMissingEmails->value);
     }
 
     /**
@@ -21,46 +22,41 @@ final class Features
 
     public static function registration(): bool
     {
-        return self::enabled('registration');
+        return self::enabled(Feature::Registration->value);
     }
 
     public static function rememberSession(): bool
     {
-        return self::enabled('remember-session');
+        return self::enabled(Feature::RememberSession->value);
     }
 
     public static function updateProfile(): bool
     {
-        return self::enabled('update-profile');
-    }
-
-    public static function auth_2fa(): bool
-    {
-        return self::enabled('auth-2fa');
+        return self::enabled(Feature::UpdateProfile->value);
     }
 
     public static function emailVerification(): bool
     {
-        return self::enabled('email-verification');
+        return self::enabled(Feature::EmailVerification->value);
     }
 
     public static function profilePhoto(): bool
     {
-        return self::enabled('profile-photo');
+        return self::enabled(Feature::ProfilePhoto->value);
     }
 
     public static function createAccountOnFirstLogin(): bool
     {
-        return self::enabled('create-account-on-first-login');
+        return self::enabled(Feature::CreateAccountOnFirstLogin->value);
     }
 
     public static function loginOnRegistration(): bool
     {
-        return self::enabled('login-on-registration');
+        return self::enabled(Feature::LoginOnRegistration->value);
     }
 
     public static function refreshOauthTokens(): bool
     {
-        return self::enabled('refresh-oauth-tokens');
+        return self::enabled(Feature::RefreshOauthTokens->value);
     }
 }

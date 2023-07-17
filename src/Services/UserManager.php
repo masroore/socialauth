@@ -25,31 +25,16 @@ final class UserManager
             ->exists();
     }
 
-    public static function createVerifiedUser(OAuthUserContract $providerUser): User
+    public static function createVerifiedUser(OAuthUserContract $providerUser, array $extraAttributes = []): User
     {
-        return User::create([
-            'name' => OAuthManager::getSocialUserName($providerUser),
+        /** @var array<string, string> $attributes */
+        $attributes = [
+            'name' => SocialAuth::getSocialUserName($providerUser),
             'email' => $providerUser->getEmail(),
             'password' => Hash::make(Str::random()),
-            'status' => UserStatus::Active->value,
-            'role' => UserRole::Member->value,
-            'email_verified_at' => Date::now(),
-            'last_login_at' => Date::now(),
-            'ip_address' => Ip::get(),
-        ]);
-    }
+        ];
+        $attributes = array_merge($attributes, $extraAttributes);
 
-    public static function createUnverifiedUser(array $data): User
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'status' => UserStatus::Unconfirmed->value,
-            'role' => UserRole::Member->value,
-            'last_login_at' => Date::now(),
-            'ip_address' => Ip::get(),
-        ]);
-
+        return User::forceCreate($attributes);
     }
 }

@@ -5,12 +5,14 @@ namespace Masroore\SocialAuth\Models;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Masroore\SocialAuth\Facades\SocialAuth;
 
 class SocialAccount extends Model
 {
     use HasTimestamps;
 
     protected $fillable = [
+        'user_id',
         'provider',
         'provider_id',
         'name',
@@ -29,7 +31,7 @@ class SocialAccount extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(SocialAuth::getUserModelClass(), 'user_id', 'id');
     }
 
     /**

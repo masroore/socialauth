@@ -12,8 +12,9 @@ use Laravel\Socialite\Facades\Socialite;
 use Masroore\SocialAuth\Exceptions\ProviderNotConfigured;
 use Masroore\SocialAuth\Http\Responses\LoginResponse;
 use Masroore\SocialAuth\Models\SocialAccount;
+use Masroore\SocialAuth\Traits\ManagesSocialAvatarSize;
 
-final class OAuthManager
+final class SocialAuth
 {
     use ManagesSocialAvatarSize;
 

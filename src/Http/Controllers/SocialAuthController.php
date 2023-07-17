@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
 use Masroore\SocialAuth\Exceptions\ProviderNotConfigured;
+use Masroore\SocialAuth\Facades\SocialAuth;
 use Masroore\SocialAuth\Http\Responses\LoginResponse;
-use Masroore\SocialAuth\Services\OAuthManager;
+use Masroore\SocialAuth\RedirectPath;
+use Masroore\SocialAuth\Services\Features;
 use Masroore\SocialAuth\Services\OAuthMessageBag;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 
@@ -19,7 +21,7 @@ class SocialAuthController extends Controller
 {
     public function redirectToProvider(string $provider): SymfonyRedirectResponse
     {
-        $provider = OAuthManager::sanitizeProviderName($provider);
+        $provider = SocialAuth::sanitizeProviderName($provider);
         $this->checkProviderConfiguration($provider);
 
         session()->put('oauth.previous_url', back()->getTargetUrl());
@@ -30,7 +32,7 @@ class SocialAuthController extends Controller
         }
         */
 
-        $scopes = OAuthManager::getProviderScopes($provider);
+        $scopes = SocialAuth::getProviderScopes($provider);
         if (!blank($scopes)) {
             return Socialite::with($provider)
                 ->scopes($scopes)
@@ -42,14 +44,14 @@ class SocialAuthController extends Controller
 
     private function checkProviderConfiguration(string $provider): void
     {
-        if (!OAuthManager::isProviderConfigured($provider)) {
+        if (!SocialAuth::isProviderConfigured($provider)) {
             throw ProviderNotConfigured::make($provider);
         }
     }
 
     public function handleProviderCallback(Request $request, string $provider): Response|RedirectResponse|LoginResponse
     {
-        $provider = OAuthManager::sanitizeProviderName($provider);
+        $provider = SocialAuth::sanitizeProviderName($provider);
         $this->checkProviderConfiguration($provider);
 
         $redirect = $this->checkErrors($request);
@@ -59,12 +61,12 @@ class SocialAuthController extends Controller
         }
 
         try {
-            $providerAccount = OAuthManager::retrieveOauthUser($provider);
+            $providerAccount = SocialAuth::retrieveOauthUser($provider);
         } catch (InvalidStateException $e) {
             return $this->handleInvalidState($e);
         }
 
-        return OAuthManager::authenticate($provider, $providerAccount);
+        return SocialAuth::authenticate($provider, $providerAccount);
     }
 
     private function checkErrors(Request $request): ?RedirectResponse
@@ -76,12 +78,13 @@ class SocialAuthController extends Controller
         if (Auth::check()) {
             flash()->warning($request->get('error_description'));
 
-            return redirect(RouteServiceProvider::HOME);
+            return redirect(RedirectPath::for('login', 'login'));
         }
 
         $messageBag = OAuthMessageBag::make($request->get('error_description'));
+        $redirectRoute = Features::registration() ? 'register' : 'login';
 
-        return redirect()->route(AuthSettings::instance()->registration ? 'register' : 'login')->withErrors($messageBag);
+        return redirect()->route(RedirectPath::for($redirectRoute, $redirectRoute))->withErrors($messageBag);
     }
 
     /**

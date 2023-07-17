@@ -22,7 +22,7 @@ final class Providers
      */
     public static function enabled(string $provider): bool
     {
-        $provider = OAuthManager::sanitizeProviderName($provider);
+        $provider = SocialAuth::sanitizeProviderName($provider);
 
         return collect(self::getProviders())->has($provider);
     }
@@ -32,7 +32,7 @@ final class Providers
      */
     public static function getProviderButton(string $provider): array
     {
-        $provider = OAuthManager::sanitizeProviderName($provider);
+        $provider = SocialAuth::sanitizeProviderName($provider);
         $providers = collect(self::getProviders());
         $button = [];
         if (!$providers->isEmpty() && $providers->has($provider)) {
