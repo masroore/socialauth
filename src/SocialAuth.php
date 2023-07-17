@@ -2,7 +2,6 @@
 
 namespace Masroore\SocialAuth;
 
-class SocialAuth
+final class SocialAuth
 {
-    // Build your next great package.
 }

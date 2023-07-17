@@ -3,17 +3,18 @@
 namespace Masroore\SocialAuth\Http\Controllers;
 
 use App\Http\Responses\LoginResponse;
-use Masroore\SocialAuth\Services\OAuth\OAuthManager;
-use Masroore\SocialAuth\Services\OAuth\OAuthMessageBag;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
 use Masroore\SocialAuth\Exceptions\SocialAuthProviderNotConfigured;
+use Masroore\SocialAuth\Services\OAuth\OAuthManager;
+use Masroore\SocialAuth\Services\OAuth\OAuthMessageBag;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
-use Illuminate\Routing\Controller;
+
 class SocialAuthController extends Controller
 {
     private function checkProviderConfiguration(string $provider): void
