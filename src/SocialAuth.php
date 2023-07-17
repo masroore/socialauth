@@ -10,34 +10,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Contracts\User as OAuthUserContract;
 use Laravel\Socialite\Facades\Socialite;
+use Masroore\SocialAuth\Events\Login;
 use Masroore\SocialAuth\Exceptions\ProviderNotConfigured;
 use Masroore\SocialAuth\Http\Responses\LoginResponse;
 use Masroore\SocialAuth\Models\SocialAccount;
 use Masroore\SocialAuth\Services\Features;
 use Masroore\SocialAuth\Services\OAuthMessageBag;
+use Masroore\SocialAuth\Services\Traits\ManagesSocialAvatarSize;
 use Masroore\SocialAuth\Services\UserManager;
-use Masroore\SocialAuth\Traits\ManagesSocialAvatarSize;
 
 final class SocialAuth
 {
-    public const PACKAGE_NAME = 'socialauth';
-
-    public function getUserModel(): Model
-    {
-        return new ($this->getUserModelClass());
-    }
-
-    public function getUserModelClass(): string
-    {
-        return $this->getConfig()['user_model'] ?? \App\Models\User::class;
-    }
-
-    public function getConfig(): array
-    {
-        return config(self::PACKAGE_NAME, []);
-    }
-
     use ManagesSocialAvatarSize;
+
+    public const PACKAGE_NAME = 'socialauth';
 
     public static function retrieveOauthUser(string $provider): OAuthUserContract
     {
@@ -97,12 +83,12 @@ final class SocialAuth
                     __('An account with that email address already exists. Please login to connect your :Provider account.', ['provider' => $provider])
                 );
 
-                return redirect()->route('login')->withErrors($messageBag);
+                return redirect()->route(RedirectPath::for('login', 'login'))->withErrors($messageBag);
             }
 
             $user = self::createNewUserFromProvider($provider, $providerUser);
 
-            return self::loginUser($user);
+            return self::loginUser($user, $providerUser);
         }
 
         $user = $socialAccount->user;
@@ -233,6 +219,8 @@ final class SocialAuth
     {
         Auth::login($user, Features::rememberSession());
 
+        Login::dispatch();
+
         return app(LoginResponse::class);
     }
 
@@ -317,5 +305,20 @@ final class SocialAuth
     public static function providers(): array
     {
         return config(self::PACKAGE_NAME . '.providers', []);
+    }
+
+    public function getUserModel(): Model
+    {
+        return new ($this->getUserModelClass());
+    }
+
+    public function getUserModelClass(): string
+    {
+        return $this->getConfig()['user_model'] ?? \App\Models\User::class;
+    }
+
+    public function getConfig(): array
+    {
+        return config(self::PACKAGE_NAME, []);
     }
 }

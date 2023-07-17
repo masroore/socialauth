@@ -2,10 +2,11 @@
 
 namespace Masroore\SocialAuth\Models\Traits;
 
-use App\Settings\AuthSettings;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Masroore\SocialAuth\Services\Features;
+use Masroore\SocialAuth\SocialAuth;
 
 trait HasProfilePhoto
 {
@@ -24,7 +25,7 @@ trait HasProfilePhoto
 
     public function deleteProfilePhoto(): void
     {
-        if (app(AuthSettings::class)->profile_photo) {
+        if (!Features::profilePhoto()) {
             return;
         }
 
@@ -66,6 +67,6 @@ trait HasProfilePhoto
      */
     protected function profilePhotoDisk(): string
     {
-        return config('oauth.profile_photo_disk', 'public');
+        return config(SocialAuth::PACKAGE_NAME . '.profile_photo_disk', 'public');
     }
 }

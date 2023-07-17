@@ -1,6 +1,6 @@
 <?php
 
-namespace Masroore\SocialAuth\Traits;
+namespace Masroore\SocialAuth\Services\Traits;
 
 use Laravel\Socialite\Contracts\User as OAuthUserContract;
 use Masroore\SocialAuth\Services\Providers;

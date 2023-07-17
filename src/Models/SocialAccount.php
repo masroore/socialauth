@@ -5,7 +5,7 @@ namespace Masroore\SocialAuth\Models;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Masroore\SocialAuth\Facades\SocialAuth;
+use Masroore\SocialAuth\SocialAuth;
 
 class SocialAccount extends Model
 {
@@ -32,20 +32,5 @@ class SocialAccount extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(SocialAuth::getUserModelClass(), 'user_id', 'id');
-    }
-
-    /**
-     * Get the data that should be shared.
-     *
-     * @return array<string, mixed>
-     */
-    public function getSharedData(): array
-    {
-        return [
-            'id' => $this->id,
-            'provider' => $this->provider,
-            'avatar_path' => $this->avatar_path,
-            'created_at' => optional($this->created_at)->diffForHumans(),
-        ];
     }
 }

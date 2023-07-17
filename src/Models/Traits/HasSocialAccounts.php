@@ -2,11 +2,11 @@
 
 namespace Masroore\SocialAuth\Models\Traits;
 
-use App\Models\SocialAccount;
-use App\Services\OAuth\OAuthManager;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Masroore\SocialAuth\Models\SocialAccount;
+use Masroore\SocialAuth\SocialAuth;
 
 /**
  * @property Collection $socialAccounts
@@ -17,9 +17,9 @@ trait HasSocialAccounts
     /**
      * Determine if the given connected account is the current connected account.
      */
-    public function isCurrentSocialAccount(SocialAccount $socialAccount): bool
+    public function isCurrentSocialAccount(SocialAccount $account): bool
     {
-        return $socialAccount->id === $this->currentSocialAccount->id;
+        return $account->id === $this->current_social_account_id;
     }
 
     /**
@@ -57,9 +57,9 @@ trait HasSocialAccounts
     /**
      * Determine if the user owns the given connected account.
      */
-    public function ownsSocialAccount(SocialAccount $socialAccount): bool
+    public function ownsSocialAccount(?SocialAccount $socialAccount): bool
     {
-        return $this->id == optional($socialAccount)->user_id;
+        return $this->id === optional($socialAccount)->user_id;
     }
 
     /**
@@ -75,7 +75,7 @@ trait HasSocialAccounts
      */
     public function getTokenFor(string $provider, mixed $default = null): mixed
     {
-        $provider = OAuthManager::sanitizeProviderName($provider);
+        $provider = SocialAuth::sanitizeProviderName($provider);
         if ($this->hasTokenFor($provider)) {
             return $this->socialAccounts
                 ->firstWhere('provider', $provider)
@@ -90,7 +90,7 @@ trait HasSocialAccounts
      */
     public function hasTokenFor(string $provider): bool
     {
-        $provider = OAuthManager::sanitizeProviderName($provider);
+        $provider = SocialAuth::sanitizeProviderName($provider);
 
         return $this->socialAccounts->contains('provider', $provider);
     }
@@ -99,13 +99,13 @@ trait HasSocialAccounts
      * Attempt to find a connected account that belongs to the user,
      * for the given provider and ID.
      */
-    public function getSocialAccountFor(string $provider, string $id): ?SocialAccount
+    public function getSocialAccountFor(string $provider, string $provider_id): ?SocialAccount
     {
-        $provider = OAuthManager::sanitizeProviderName($provider);
+        $provider = SocialAuth::sanitizeProviderName($provider);
 
         return $this->socialAccounts
             ->where('provider', $provider)
-            ->where('provider_id', $id)
+            ->where('provider_id', $provider_id)
             ->first();
     }
 }
