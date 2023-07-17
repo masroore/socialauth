@@ -5,6 +5,7 @@ namespace Masroore\SocialAuth\Services;
 use BadMethodCallException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Masroore\SocialAuth\SocialAuth;
 
 final class Providers
 {
@@ -64,7 +65,7 @@ final class Providers
 
     public static function getProviders(): array
     {
-        return config('oauth.providers', []);
+        return config(SocialAuth::PACKAGE_NAME . '.providers', []);
     }
 
     /**

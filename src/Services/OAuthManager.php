@@ -2,12 +2,6 @@
 
 namespace Masroore\SocialAuth\Services;
 
-use App\Exceptions\OAuthProviderNotConfigured;
-use App\Http\Responses\LoginResponse;
-use App\Models\SocialAccount;
-use App\Models\User;
-use App\Services\Auth\UserManager;
-use App\Settings\AuthSettings;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -15,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Contracts\User as OAuthUserContract;
 use Laravel\Socialite\Facades\Socialite;
+use Masroore\SocialAuth\Exceptions\ProviderNotConfigured;
+use Masroore\SocialAuth\Http\Responses\LoginResponse;
+use Masroore\SocialAuth\Models\SocialAccount;
 
 final class OAuthManager
 {
@@ -24,6 +21,15 @@ final class OAuthManager
     {
         $socialUser = Socialite::driver($provider)->user();
         $socialUser = self::generateMissingEmails($provider, $socialUser);
+
+        return $socialUser;
+    }
+
+    private static function generateMissingEmails(string $provider, OAuthUserContract $socialUser): OAuthUserContract
+    {
+        if (Features::generateMissingEmails()) {
+            $socialUser->email = $socialUser->getEmail() ?? ("{$socialUser->id}@{$provider}." . config('app.domain'));
+        }
 
         return $socialUser;
     }
@@ -41,10 +47,10 @@ final class OAuthManager
         // new account registration...
         $previousUrl = session()->get('oauth.previous_url');
 
-        if (AuthSettings::instance()->registration && !$socialAccount
+        if (Features::registration() && !$socialAccount
             && (
                 $previousUrl === route('register')
-                || (AuthSettings::instance()->create_account_on_first_login && $previousUrl === route('login'))
+                || (Features::createAccountOnFirstLogin() && $previousUrl === route('login'))
             )
         ) {
             $user = UserManager::findByEmail($providerUser->getEmail());
@@ -56,7 +62,7 @@ final class OAuthManager
             return self::registerNewUser($provider, $providerUser);
         }
 
-        if (!AuthSettings::instance()->create_account_on_first_login && !$socialAccount) {
+        if (!Features::createAccountOnFirstLogin() && !$socialAccount) {
             $messageBag = OAuthMessageBag::make(
                 __('An account with this :Provider sign in was not found. Please register or try a different sign in method.', ['provider' => $provider])
             );
@@ -64,7 +70,7 @@ final class OAuthManager
             return redirect()->route('login')->withErrors($messageBag);
         }
 
-        if (AuthSettings::instance()->create_account_on_first_login && !$socialAccount) {
+        if (Features::createAccountOnFirstLogin() && !$socialAccount) {
             if (UserManager::emailExists($providerUser->getEmail())) {
                 $messageBag = OAuthMessageBag::make(
                     __('An account with that email address already exists. Please login to connect your :Provider account.', ['provider' => $provider])
@@ -138,15 +144,6 @@ final class OAuthManager
         return SocialAccount::forceCreate($attributes);
     }
 
-    private static function generateMissingEmails(string $provider, OAuthUserContract $socialUser): OAuthUserContract
-    {
-        if (AuthSettings::instance()->generate_missing_emails) {
-            $socialUser->email = $socialUser->getEmail() ?? ("{$socialUser->id}@{$provider}." . config('app.domain'));
-        }
-
-        return $socialUser;
-    }
-
     private static function getFillableAttributes(string $provider, OAuthUserContract $socialUser): array
     {
         return [
@@ -193,7 +190,7 @@ final class OAuthManager
      */
     private static function alreadyRegistered(Authenticatable $user, ?SocialAccount $account, string $provider, OAuthUserContract $socialUser): RedirectResponse|LoginResponse
     {
-        if (AuthSettings::instance()->create_account_on_first_login) {
+        if (Features::createAccountOnFirstLogin()) {
             // The user exists, but they're not registered with the given provider.
             if (!$account) {
                 self::createSocialAccountForUser($user, $provider, $socialUser);
@@ -213,7 +210,7 @@ final class OAuthManager
      */
     private static function loginUser(Authenticatable $user): LoginResponse
     {
-        Auth::login($user, AuthSettings::instance()->remember_session);
+        Auth::login($user, Features::rememberSession());
 
         return app(LoginResponse::class);
     }
@@ -252,7 +249,7 @@ final class OAuthManager
             return tap(
                 UserManager::createVerifiedUser($providerUser),
                 static function (User $user) use ($provider, $providerUser): void {
-                    if (AuthSettings::instance()->profile_photo && $providerUser->getAvatar()) {
+                    if (Features::profilePhoto() && $providerUser->getAvatar()) {
                         $user->setProfilePhotoFromUrl($providerUser->getAvatar());
                     }
 
@@ -278,7 +275,7 @@ final class OAuthManager
     public static function getProviderConfig(string $provider): array
     {
         if (!self::isProviderConfigured($provider)) {
-            throw OAuthProviderNotConfigured::make($provider);
+            throw ProviderNotConfigured::make($provider);
         }
 
         return config()->get('services.' . $provider);

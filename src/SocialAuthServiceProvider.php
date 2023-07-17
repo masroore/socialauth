@@ -7,12 +7,10 @@ use Spatie\LaravelPackageTools\Package;
 
 class SocialAuthServiceProvider extends ServiceProvider
 {
-    public const PACKAGE_NAME = 'socialauth';
-
     public function configurePackage(Package $package): void
     {
         $package
-            ->name(self::PACKAGE_NAME)
+            ->name(SocialAuth::PACKAGE_NAME)
             ->hasConfigFile()
             ->hasTranslations()
             ->hasViews()
@@ -33,7 +31,7 @@ class SocialAuthServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../config/config.php' => config_path(self::PACKAGE_NAME . '.php'),
+                __DIR__ . '/../config/config.php' => config_path(SocialAuth::PACKAGE_NAME . '.php'),
             ], 'config');
 
             // Publishing the views.
@@ -62,9 +60,9 @@ class SocialAuthServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', self::PACKAGE_NAME);
+        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', SocialAuth::PACKAGE_NAME);
 
         // Register the main class to use with the facade
-        $this->app->singleton(self::PACKAGE_NAME, fn () => new SocialAuth());
+        $this->app->singleton(SocialAuth::PACKAGE_NAME, fn () => new SocialAuth());
     }
 }

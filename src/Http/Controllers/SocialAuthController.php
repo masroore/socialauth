@@ -2,7 +2,6 @@
 
 namespace Masroore\SocialAuth\Http\Controllers;
 
-use App\Http\Responses\LoginResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -10,20 +9,14 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
-use Masroore\SocialAuth\Exceptions\SocialAuthProviderNotConfigured;
-use Masroore\SocialAuth\Services\OAuth\OAuthManager;
-use Masroore\SocialAuth\Services\OAuth\OAuthMessageBag;
+use Masroore\SocialAuth\Exceptions\ProviderNotConfigured;
+use Masroore\SocialAuth\Http\Responses\LoginResponse;
+use Masroore\SocialAuth\Services\OAuthManager;
+use Masroore\SocialAuth\Services\OAuthMessageBag;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 
 class SocialAuthController extends Controller
 {
-    private function checkProviderConfiguration(string $provider): void
-    {
-        if (!OAuthManager::isProviderConfigured($provider)) {
-            throw SocialAuthProviderNotConfigured::make($provider);
-        }
-    }
-
     public function redirectToProvider(string $provider): SymfonyRedirectResponse
     {
         $provider = OAuthManager::sanitizeProviderName($provider);
@@ -45,6 +38,13 @@ class SocialAuthController extends Controller
         }
 
         return Socialite::driver($provider)->redirect();
+    }
+
+    private function checkProviderConfiguration(string $provider): void
+    {
+        if (!OAuthManager::isProviderConfigured($provider)) {
+            throw ProviderNotConfigured::make($provider);
+        }
     }
 
     public function handleProviderCallback(Request $request, string $provider): Response|RedirectResponse|LoginResponse

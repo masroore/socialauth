@@ -9,6 +9,6 @@ final class RoutePath
      */
     public static function for(string $routeName, string $default): string
     {
-        return config(SocialAuthServiceProvider::PACKAGE_NAME . '.paths.' . $routeName) ?? $default;
+        return config(SocialAuth::PACKAGE_NAME . '.paths.' . $routeName) ?? $default;
     }
 }

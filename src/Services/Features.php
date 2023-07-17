@@ -2,14 +2,13 @@
 
 namespace Masroore\SocialAuth\Services;
 
+use Masroore\SocialAuth\SocialAuth;
+
 final class Features
 {
-    /**
-     * Determine if the application has the generates missing emails feature enabled.
-     */
-    public static function generatesMissingEmails(): bool
+    public static function generateMissingEmails(): bool
     {
-        return self::enabled(self::generateMissingEmails());
+        return self::enabled('generate-missing-emails');
     }
 
     /**
@@ -17,97 +16,51 @@ final class Features
      */
     public static function enabled(string $feature): bool
     {
-        return in_array($feature, config('oauth.features', []));
+        return in_array($feature, config(SocialAuth::PACKAGE_NAME . '.features', []));
     }
 
-    /**
-     * Enabled the generate missing emails feature.
-     */
-    public static function generateMissingEmails(): string
+    public static function registration(): bool
     {
-        return 'generate-missing-emails';
+        return self::enabled('registration');
     }
 
-    /**
-     * Determine if the application supports creating accounts
-     * when logging in for the first time via a provider.
-     */
-    public static function hasCreateAccountOnFirstLoginFeatures(): bool
+    public static function rememberSession(): bool
     {
-        return self::enabled(self::createAccountOnFirstLogin());
+        return self::enabled('remember-session');
     }
 
-    /**
-     * Enable the create account on first login feature.
-     */
-    public static function createAccountOnFirstLogin(): string
+    public static function updateProfile(): bool
     {
-        return 'create-account-on-first-login';
+        return self::enabled('update-profile');
     }
 
-    /**
-     * Determine if the application supports logging into existing
-     * accounts when registering with a provider who's email address
-     * is already registered.
-     */
-    public static function hasLoginOnRegistrationFeatures(): bool
+    public static function auth_2fa(): bool
     {
-        return self::enabled(self::loginOnRegistration());
+        return self::enabled('auth-2fa');
     }
 
-    /**
-     * Enable the login on registration feature.
-     */
-    public static function loginOnRegistration(): string
+    public static function emailVerification(): bool
     {
-        return 'login-on-registration';
+        return self::enabled('email-verification');
     }
 
-    /**
-     * Determine if the application should use provider avatars when registering.
-     */
-    public static function hasProviderAvatarsFeature(): bool
+    public static function profilePhoto(): bool
     {
-        return self::enabled(self::providerAvatars());
+        return self::enabled('profile-photo');
     }
 
-    /**
-     * Enable the provider avatars feature.
-     */
-    public static function providerAvatars(): string
+    public static function createAccountOnFirstLogin(): bool
     {
-        return 'provider-avatars';
+        return self::enabled('create-account-on-first-login');
     }
 
-    /**
-     * Determine if the application should remember the users session om login.
-     */
-    public static function hasRememberSessionFeatures(): bool
+    public static function loginOnRegistration(): bool
     {
-        return self::enabled(self::rememberSession());
+        return self::enabled('login-on-registration');
     }
 
-    /**
-     * Enable the remember session feature for logging in.
-     */
-    public static function rememberSession(): string
+    public static function refreshOauthTokens(): bool
     {
-        return 'remember-session';
-    }
-
-    /**
-     * Determine if the application should refresh the tokens on retrieval.
-     */
-    public static function refreshesOauthTokens(): bool
-    {
-        return self::enabled(self::refreshOauthTokens());
-    }
-
-    /**
-     * Enable the automatic refresh token update on token retrieval.
-     */
-    public static function refreshOauthTokens(): string
-    {
-        return 'refresh-oauth-tokens';
+        return self::enabled('refresh-oauth-tokens');
     }
 }
