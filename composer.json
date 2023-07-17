@@ -1,0 +1,63 @@
+{
+    "name": "masroore/socialauth",
+    "description": "Social authentication through Laravel Socialite",
+    "keywords": [
+        "laravel",
+        "socialite",
+        "oauth",
+        "social",
+        "login",
+        "social-auth"
+    ],
+    "homepage": "https://github.com/masroore/socialauth",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Masroor Ehsan",
+            "email": "masroore@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1|^8.2",
+        "guzzlehttp/guzzle": "^7.7",
+        "illuminate/support": "^10.15",
+        "laravel/socialite": "^5.8",
+        "symfony/http-foundation": "^6.3",
+        "symfony/psr-http-message-bridge": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Masroore\\SocialAuth\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Masroore\\SocialAuth\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SocialAuthServiceProvider"
+            ],
+            "aliases": {
+                "Socialauth": "SocialAuthFacade"
+            }
+        }
+    },
+    "require-dev": {
+        "laravel/pint": "^1.10",
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^10.2"
+    }
+}
