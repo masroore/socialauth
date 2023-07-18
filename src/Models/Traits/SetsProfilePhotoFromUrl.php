@@ -14,12 +14,14 @@ trait SetsProfilePhotoFromUrl
      */
     public function setProfilePhotoFromUrl(string $url): void
     {
-        $origName = pathinfo($url)['basename'];
+        $info = pathinfo(parse_url($url, PHP_URL_PATH));
+        $origName = $info['basename'];
+        $ext = $info['extension'];
         $response = Http::get($url);
 
         // Determine if the status code is >= 200 and < 300
         if ($response->successful()) {
-            $path = self::tempFilePath();
+            $path = self::tempFilePath($ext);
 
             if (@file_put_contents($path, $response) !== false) {
                 $this->resizeImage($path);
@@ -31,9 +33,14 @@ trait SetsProfilePhotoFromUrl
         }
     }
 
-    private static function tempFilePath(): string
+    private static function tempFilePath(string $origExtension): string
     {
-        return tempnam(sys_get_temp_dir(), uniqid(mt_rand(), true));
+        while (true) {
+            $path = sys_get_temp_dir() . '/' . uniqid(mt_rand(), true) . '.' . $origExtension;
+            if (!file_exists($path)) {
+                return $path;
+            }
+        }
     }
 
     private function resizeImage(string $path): void
