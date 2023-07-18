@@ -26,7 +26,10 @@ final class UserManager
 
     public static function findByEmail(string $email): ?Model
     {
-        return self::getUserModelClass()::firstWhere(get_config('email_column'), self::sanitizeEmail($email));
+        return self::getUserModelClass()::firstWhere(
+            get_config('columns.email', 'email'),
+            self::sanitizeEmail($email)
+        );
     }
 
     public static function sanitizeEmail(string $email): string
