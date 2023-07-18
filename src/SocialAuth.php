@@ -20,7 +20,7 @@ use Masroore\SocialAuth\Support\Features;
 use Masroore\SocialAuth\Support\ManagesSocialAvatarSize;
 use Masroore\SocialAuth\Support\OAuthMessageBag;
 use Masroore\SocialAuth\Support\Providers;
-use Masroore\SocialAuth\Support\RedirectPath;
+use Masroore\SocialAuth\Support\Paths;
 
 final class SocialAuth
 {
@@ -86,7 +86,7 @@ final class SocialAuth
                     __('An account with that email address already exists. Please login to connect your :Provider account.', ['provider' => $provider])
                 );
 
-                return redirect()->route(RedirectPath::for('login', 'login'))->withErrors($messageBag);
+                return redirect()->route(Paths::redirect('login', 'login'))->withErrors($messageBag);
             }
 
             $user = self::createNewUserFromProvider($provider, $providerUser);

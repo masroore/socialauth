@@ -14,7 +14,7 @@ use Masroore\SocialAuth\Facades\SocialAuth;
 use Masroore\SocialAuth\Http\Responses\LoginResponse;
 use Masroore\SocialAuth\Support\Features;
 use Masroore\SocialAuth\Support\OAuthMessageBag;
-use Masroore\SocialAuth\Support\RedirectPath;
+use Masroore\SocialAuth\Support\Paths;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 
 class SocialAuthController extends Controller
@@ -78,13 +78,13 @@ class SocialAuthController extends Controller
         if (Auth::check()) {
             flash()->warning($request->get('error_description'));
 
-            return redirect(RedirectPath::for('login', 'login'));
+            return redirect(Paths::redirect('login', 'login'));
         }
 
         $messageBag = OAuthMessageBag::make($request->get('error_description'));
         $redirectRoute = Features::registration() ? 'register' : 'login';
 
-        return redirect()->route(RedirectPath::for($redirectRoute, $redirectRoute))->withErrors($messageBag);
+        return redirect()->route(Paths::redirect($redirectRoute, $redirectRoute))->withErrors($messageBag);
     }
 
     /**
