@@ -99,7 +99,7 @@ final class SocialAuth
             'current_social_account_id' => $socialAccount->id,
         ])->save();
 
-        return self::loginUser($user);
+        return self::loginUser($user, $socialAccount);
     }
 
     public static function sanitizeProviderName(string $provider): string
@@ -125,16 +125,14 @@ final class SocialAuth
     {
         // if ($account && $account->user_id !== $user->id) {
         if ($account && !$user->ownsSocialAccount($account)) {
-            flash()->warning(
-                __('This :Provider sign in account is already associated with another user. Please try a different account.', ['provider' => $provider])
-            );
+            // flash()->warning(__('This :Provider sign in account is already associated with another user. Please try a different account.', ['provider' => $provider]));
 
             return redirect()->route('profile.show');
         }
 
         if (!$account) {
             self::createSocialAccountForUser($user, $provider, $socialUser);
-            flash()->success(__('You have successfully connected :Provider to your account.', ['provider' => $provider]));
+            // flash()->success(__('You have successfully connected :Provider to your account.', ['provider' => $provider]));
 
             return redirect()->route('profile.show');
         }
@@ -200,26 +198,27 @@ final class SocialAuth
         if (Features::createAccountOnFirstLogin()) {
             // The user exists, but they're not registered with the given provider.
             if (!$account) {
-                self::createSocialAccountForUser($user, $provider, $socialUser);
+                $account = self::createSocialAccountForUser($user, $provider, $socialUser);
             }
 
-            return self::loginUser($user);
+            return self::loginUser($user, $account);
         }
 
-        flash()->warning(__('This :Provider sign in account is already associated with your user.', ['provider' => $provider]));
-        $messageBag = OAuthMessageBag::make(__('An account with that :Provider sign in already exists, please login.', ['provider' => $provider]));
+        $errors = OAuthMessageBag::make(__('This :Provider sign in account is already associated with your user. Please login.', ['provider' => $provider]));
 
-        return redirect()->route('register')->withErrors($messageBag);
+        return redirect()->route('register')->withErrors($errors);
     }
 
     /**
      * Authenticate the given user and return a login response.
      */
-    private static function loginUser(Authenticatable $user): LoginResponse
+    private static function loginUser(Authenticatable $user, ?SocialAccount $account): LoginResponse
     {
         Auth::login($user, Features::rememberSession());
 
-        Login::dispatch();
+        if ($account !== null) {
+            Login::dispatch($account);
+        }
 
         return app(LoginResponse::class);
     }
@@ -232,24 +231,24 @@ final class SocialAuth
         $provider_email = $providerAccount->getEmail();
 
         if (!$provider_email) {
-            $messageBag = OAuthMessageBag::make(
+            $errors = OAuthMessageBag::make(
                 __('No email address is associated with this :Provider account. Please try a different account.', ['provider' => $provider])
             );
 
-            return redirect()->route('register')->withErrors($messageBag);
+            return redirect()->route('register')->withErrors($errors);
         }
 
         if (UserManager::emailExists($provider_email)) {
-            $messageBag = OAuthMessageBag::make(
+            $errors = OAuthMessageBag::make(
                 __('An account with that email address already exists. Please login to connect your :Provider account.', ['provider' => $provider])
             );
 
-            return redirect()->route('login')->withErrors($messageBag);
+            return redirect()->route('login')->withErrors($errors);
         }
 
         $user = self::createNewUserFromProvider($provider, $providerAccount);
 
-        return self::loginUser($user);
+        return self::loginUser($user, $user->currentSocialAccount);
     }
 
     public static function createNewUserFromProvider(string $provider, OAuthUserContract $providerUser): Model
@@ -276,13 +275,13 @@ final class SocialAuth
         $socialAccount->forceFill($attributes)->save();
     }
 
-    public function getDomainAllowList(): array
+    public function getAllowedDomains(): array
     {
-        return $this->getConfig()['domain_allowlist'] ?? [];
+        return get_config('domains.allowed', []);
     }
 
-    public function getConfig(): array
+    public function getBannedDomains(): array
     {
-        return config(self::PACKAGE_NAME, []);
+        return get_config('domains.banned', []);
     }
 }
