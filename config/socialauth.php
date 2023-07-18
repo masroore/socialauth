@@ -42,6 +42,7 @@ return [
     'features' => [
         Feature::Registration->value,
         Feature::GenerateMissingEmails->value,
+        Feature::MarkEmailVerified->value,
         Feature::CreateAccountOnFirstLogin->value,
         Feature::LoginOnRegistration->value,
         Feature::ProfilePhoto->value,

@@ -21,13 +21,13 @@ final class UserManager
 
     public static function getUserModelClass(): string
     {
-        return (string) get_config('user_model', \App\Models\User::class);
+        return (string) sa_config('user_model', \App\Models\User::class);
     }
 
     public static function findByEmail(string $email): ?Model
     {
         return self::getUserModelClass()::firstWhere(
-            get_config('columns.email', 'email'),
+            sa_config('columns.email', 'email'),
             self::sanitizeEmail($email)
         );
     }
@@ -39,14 +39,14 @@ final class UserManager
 
     public static function emailExists(string $email): bool
     {
-        return DB::table(get_config('users_table'))
-            ->where(get_config('columns.email', 'email'), self::sanitizeEmail($email))
+        return DB::table(sa_config('users_table'))
+            ->where(sa_config('columns.email', 'email'), self::sanitizeEmail($email))
             ->exists();
     }
 
     public static function createUserFromSocialite(OAuthUserContract $providerUser, array $extraAttributes = []): Model
     {
-        $columns = get_config('columns', []);
+        $columns = sa_config('columns', []);
         if (blank($columns)) {
             throw ConfigurationException::make('columns');
         }
@@ -58,7 +58,7 @@ final class UserManager
             $columns['password'] => Hash::make(Str::random()),
         ];
 
-        if (Features::emailVerification()) {
+        if (Features::markEmailVerified()) {
             $attributes[$columns['email_verified_at']] = Date::now();
         }
 

@@ -3,7 +3,6 @@
 namespace Masroore\SocialAuth\Support;
 
 use Masroore\SocialAuth\Enums\Feature;
-use Masroore\SocialAuth\SocialAuth;
 
 final class Features
 {
@@ -17,7 +16,7 @@ final class Features
      */
     public static function enabled(string $feature): bool
     {
-        return in_array($feature, config(SocialAuth::PACKAGE_NAME . '.features', []));
+        return in_array($feature, sa_config('features', []), true);
     }
 
     public static function registration(): bool
@@ -35,9 +34,9 @@ final class Features
         return self::enabled(Feature::UpdateProfile->value);
     }
 
-    public static function emailVerification(): bool
+    public static function markEmailVerified(): bool
     {
-        return self::enabled(Feature::EmailVerification->value);
+        return self::enabled(Feature::MarkEmailVerified->value);
     }
 
     public static function profilePhoto(): bool

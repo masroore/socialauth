@@ -277,11 +277,11 @@ final class SocialAuth
 
     public function getAllowedDomains(): array
     {
-        return get_config('domains.allowed', []);
+        return sa_config('domains.allowed', []);
     }
 
     public function getBannedDomains(): array
     {
-        return get_config('domains.banned', []);
+        return sa_config('domains.banned', []);
     }
 }
