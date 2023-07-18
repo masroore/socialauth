@@ -14,7 +14,7 @@ class SocialAuthServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             // ->hasTranslations()
             // ->hasViews()
-            ->hasRoute('web')
+            ->hasRoute(SocialAuth::PACKAGE_NAME)
             ->hasMigration('create_social_accounts_table');
     }
 
