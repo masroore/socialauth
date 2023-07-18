@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Contracts\User as OAuthUserContract;
@@ -19,6 +20,7 @@ use Masroore\SocialAuth\Support\Features;
 use Masroore\SocialAuth\Support\ManagesSocialAvatarSize;
 use Masroore\SocialAuth\Support\OAuthMessageBag;
 use Masroore\SocialAuth\Support\Providers;
+use Masroore\SocialAuth\Support\RedirectPath;
 
 final class SocialAuth
 {
@@ -257,7 +259,7 @@ final class SocialAuth
     {
         return DB::transaction(static function () use ($provider, $providerUser) {
             return tap(
-                UserManager::createVerifiedUser($providerUser),
+                UserManager::createUserFromSocialite($providerUser),
                 static function (User $user) use ($provider, $providerUser): void {
                     if (Features::profilePhoto() && $providerUser->getAvatar()) {
                         $user->setProfilePhotoFromUrl($providerUser->getAvatar());
@@ -303,7 +305,7 @@ final class SocialAuth
     /**
      * Determine which providers the application supports.
      */
-    public static function providers(): array
+    public static function providers(): Collection
     {
         return Providers::getProviders();
     }
