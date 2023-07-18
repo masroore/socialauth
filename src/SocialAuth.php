@@ -16,6 +16,7 @@ use Masroore\SocialAuth\Http\Responses\LoginResponse;
 use Masroore\SocialAuth\Models\SocialAccount;
 use Masroore\SocialAuth\Services\Features;
 use Masroore\SocialAuth\Services\OAuthMessageBag;
+use Masroore\SocialAuth\Services\Providers;
 use Masroore\SocialAuth\Services\Traits\ManagesSocialAvatarSize;
 use Masroore\SocialAuth\Services\UserManager;
 
@@ -304,7 +305,7 @@ final class SocialAuth
      */
     public static function providers(): array
     {
-        return config(self::PACKAGE_NAME . '.providers', []);
+        return Providers::getProviders();
     }
 
     public function getUserModel(): Model
@@ -320,5 +321,10 @@ final class SocialAuth
     public function getConfig(): array
     {
         return config(self::PACKAGE_NAME, []);
+    }
+
+    public function getDomainAllowList(): array
+    {
+        return $this->getConfig()['domain_allowlist'] ?? [];
     }
 }
