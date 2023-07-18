@@ -11,9 +11,12 @@ trait HasProfilePhoto
 {
     public function updateProfilePhoto(UploadedFile $photo, string $storagePath = 'profile-photos'): void
     {
-        tap($this->profile_photo, function ($previous) use ($photo, $storagePath): void {
+        $attribute_name = sa_config('columns.profile_photo', 'profile_photo');
+        $profile_photo = $this->getProfilePhoto();
+
+        tap($profile_photo, function ($previous) use ($attribute_name, $photo, $storagePath): void {
             $this->forceFill([
-                'profile_photo' => $photo->storePublicly($storagePath, ['disk' => $this->profilePhotoDisk()]),
+                $attribute_name => $photo->storePublicly($storagePath, ['disk' => $this->profilePhotoDisk()]),
             ])->save();
 
             if ($previous) {
@@ -22,20 +25,31 @@ trait HasProfilePhoto
         });
     }
 
+    public function getProfilePhoto(): ?string
+    {
+        $attribute_name = sa_config('columns.profile_photo', 'profile_photo');
+
+        if (array_key_exists($attribute_name, $this->getAttributes())) {
+            return $this->getAttributes()[$attribute_name];
+        }
+
+        return null;
+    }
+
     public function deleteProfilePhoto(): void
     {
         if (!Features::profilePhoto()) {
             return;
         }
-
-        if (null === $this->profile_photo) {
+        $photo = $this->getProfilePhoto();
+        if (null === $photo) {
             return;
         }
 
-        Storage::disk($this->profilePhotoDisk())->delete($this->profile_photo);
+        Storage::disk($this->profilePhotoDisk())->delete($photo);
 
         $this->forceFill([
-            'profile_photo' => null,
+            sa_config('columns.profile_photo', 'profile_photo') => null,
         ])->save();
     }
 
@@ -44,9 +58,11 @@ trait HasProfilePhoto
      */
     public function profilePhotoUrl(): Attribute
     {
-        return Attribute::get(function () {
-            return $this->profile_photo
-                ? Storage::disk($this->profilePhotoDisk())->url($this->profile_photo)
+        $photo = $this->getProfilePhoto();
+
+        return Attribute::get(function () use ($photo) {
+            return $photo
+                ? Storage::disk($this->profilePhotoDisk())->url($photo)
                 : $this->defaultProfilePhotoUrl();
         });
     }
@@ -56,7 +72,9 @@ trait HasProfilePhoto
      */
     protected function defaultProfilePhotoUrl(): string
     {
-        $nameInitials = trim(collect(explode(' ', $this->name))->map(fn ($segment) => mb_substr($segment, 0, 1))->join(' '));
+        $attribute = sa_config('columns.name', 'name');
+        $name = $this->getAttributes()[$attribute];
+        $nameInitials = trim(collect(explode(' ', $name))->map(fn ($segment) => mb_substr($segment, 0, 1))->join(' '));
 
         return 'https://ui-avatars.com/api/?name=' . urlencode($nameInitials) . '&color=7F9CF5&background=EBF4FF';
     }
