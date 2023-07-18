@@ -64,6 +64,6 @@ final class UserManager
 
         $attributes = array_merge($attributes, $extraAttributes);
 
-        return self::getUserModelClass()::create($attributes);
+        return self::getUserModelClass()::forceCreate($attributes);
     }
 }
