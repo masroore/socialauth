@@ -42,9 +42,10 @@ return [
         Feature::RememberSession->value,
     ],
 
-    'paths' => [
+    'routes' => [
         // Specify the route name for the login page
         'login' => 'login',
+        'register' => 'register',
     ],
 
     'redirects' => [
