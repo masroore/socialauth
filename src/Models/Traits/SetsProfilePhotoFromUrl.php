@@ -14,9 +14,12 @@ trait SetsProfilePhotoFromUrl
      */
     public function setProfilePhotoFromUrl(string $url): void
     {
-        $info = pathinfo(parse_url($url, PHP_URL_PATH));
-        $origName = $info['basename'];
-        $ext = $info['extension'];
+        $url_path = parse_url($url, PHP_URL_PATH);
+        $origName = pathinfo($url_path, PATHINFO_BASENAME);
+        $ext = pathinfo($url_path, PATHINFO_EXTENSION);
+        if (blank($ext)) {
+            $ext = 'jpg';
+        }
         $response = Http::get($url);
 
         // Determine if the status code is >= 200 and < 300
