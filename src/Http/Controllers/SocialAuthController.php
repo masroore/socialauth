@@ -77,7 +77,11 @@ class SocialAuthController extends Controller
 
         $errors = OAuthMessageBag::make($request->get('error_description'));
 
-        $redirectRoute = Auth::check() ? 'login' : (Features::registration() ? 'register' : 'login');
+        if (Auth::check()) {
+            $redirectRoute = 'login';
+        } else {
+            $redirectRoute = Features::registration() ? 'register' : 'login';
+        }
 
         return redirect()->route(Routes::redirect($redirectRoute, $redirectRoute))->withErrors($errors);
     }

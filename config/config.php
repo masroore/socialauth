@@ -33,7 +33,6 @@ return [
         'github' => [
             'label' => 'GitHub',
             'icon' => 'fa-github',
-            'scopes' => [],
         ],
     ],
 
