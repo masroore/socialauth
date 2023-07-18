@@ -10,6 +10,7 @@ enum Feature: string
     case UpdateProfile = 'update-profile';
     case MarkEmailVerified = 'mark-email-verified';
     case ProfilePhoto = 'profile-photo';
+    case ResizeProfilePhoto = 'resize-profile-photo';
     case CreateAccountOnFirstLogin = 'create-account-on-first-login';
     case LoginOnRegistration = 'login-on-registration';
     case GenerateMissingEmails = 'generate-missing-emails';

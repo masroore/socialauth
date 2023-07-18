@@ -5,7 +5,6 @@ namespace Masroore\SocialAuth\Models\Traits;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Masroore\SocialAuth\SocialAuth;
 use Masroore\SocialAuth\Support\Features;
 
 trait HasProfilePhoto
@@ -67,6 +66,11 @@ trait HasProfilePhoto
      */
     protected function profilePhotoDisk(): string
     {
-        return config(SocialAuth::PACKAGE_NAME . '.profile_photo_disk', 'public');
+        return (string) sa_config('profile_photo.disk', 'public');
+    }
+
+    protected function profilePhotoSize(): int
+    {
+        return (int) sa_config('profile_photo.size', 180);
     }
 }

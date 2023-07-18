@@ -44,6 +44,11 @@ final class Features
         return self::enabled(Feature::ProfilePhoto->value);
     }
 
+    public static function resizeProfilePhoto(): bool
+    {
+        return self::enabled(Feature::ResizeProfilePhoto->value);
+    }
+
     public static function createAccountOnFirstLogin(): bool
     {
         return self::enabled(Feature::CreateAccountOnFirstLogin->value);

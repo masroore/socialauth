@@ -24,6 +24,7 @@
         "guzzlehttp/guzzle": "^7.7",
         "illuminate/contracts": "^10.15",
         "illuminate/support": "^10.15",
+        "intervention/image": "^2.7",
         "laravel/socialite": "^5.8",
         "spatie/laravel-package-tools": "^1.15",
         "symfony/http-foundation": "^6.3",

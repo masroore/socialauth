@@ -30,7 +30,10 @@ return [
         'banned' => [],
     ],
 
-    'profile_photo_disk' => 'public',
+    'profile_photo' => [
+        'disk' => 'public',
+        'dimensions' => 180,
+    ],
 
     'providers' => [
         'github' => [
@@ -46,6 +49,7 @@ return [
         Feature::CreateAccountOnFirstLogin->value,
         Feature::LoginOnRegistration->value,
         Feature::ProfilePhoto->value,
+        Feature::ResizeProfilePhoto->value,
         Feature::UpdateProfile->value,
         Feature::RefreshOauthTokens->value,
         Feature::RememberSession->value,
