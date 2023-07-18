@@ -18,7 +18,7 @@ return [
         'name' => 'name',
         'email' => 'email',
         'password' => 'password',
-        'avatar_url' => 'avatar_url',
+        'profile_photo' => 'profile_photo',
         'email_verified_at' => 'email_verified_at',
     ],
 
