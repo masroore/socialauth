@@ -21,22 +21,12 @@ final class UserManager
 
     public static function getUserModelClass(): string
     {
-        return (string) self::config('user_model', \App\Models\User::class);
-    }
-
-    public static function config(string $key, mixed $default): mixed
-    {
-        return config(self::configKey($key), $default);
-    }
-
-    public static function configKey(?string $name = null): string
-    {
-        return blank($name) ? SocialAuth::PACKAGE_NAME : SocialAuth::PACKAGE_NAME . '.' . $name;
+        return (string) get_config('user_model', \App\Models\User::class);
     }
 
     public static function findByEmail(string $email): ?Model
     {
-        return self::getUserModelClass()::firstWhere(self::config('email_column'), self::sanitizeEmail($email));
+        return self::getUserModelClass()::firstWhere(get_config('email_column'), self::sanitizeEmail($email));
     }
 
     public static function sanitizeEmail(string $email): string
@@ -46,14 +36,14 @@ final class UserManager
 
     public static function emailExists(string $email): bool
     {
-        return DB::table(self::config('users_table'))
-            ->where(self::config('columns.email', 'email'), self::sanitizeEmail($email))
+        return DB::table(get_config('users_table'))
+            ->where(get_config('columns.email', 'email'), self::sanitizeEmail($email))
             ->exists();
     }
 
     public static function createUserFromSocialite(OAuthUserContract $providerUser, array $extraAttributes = []): Model
     {
-        $columns = self::config('columns', []);
+        $columns = get_config('columns', []);
         if (blank($columns)) {
             throw ConfigurationException::make('columns');
         }

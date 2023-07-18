@@ -46,7 +46,10 @@
     "autoload": {
         "psr-4": {
             "Masroore\\SocialAuth\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
