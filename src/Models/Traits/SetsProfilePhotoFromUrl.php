@@ -4,8 +4,7 @@ namespace Masroore\SocialAuth\Models\Traits;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
-use Intervention\Image\Facades\Image;
-use Masroore\SocialAuth\Support\Features;
+use Masroore\SocialAuth\Services\ImageProcessor;
 
 trait SetsProfilePhotoFromUrl
 {
@@ -14,55 +13,43 @@ trait SetsProfilePhotoFromUrl
      */
     public function setProfilePhotoFromUrl(string $url): void
     {
-        $url_path = parse_url($url, PHP_URL_PATH);
-        $origName = pathinfo($url_path, PATHINFO_BASENAME);
-        $ext = pathinfo($url_path, PATHINFO_EXTENSION);
-        if (blank($ext)) {
-            $ext = 'jpg';
-        }
         $response = Http::get($url);
 
-        // Determine if the status code is >= 200 and < 300
         if ($response->successful()) {
-            $path = self::tempFilePath($ext);
+            [$origName, $ext] = $this->getFilenameFromUrl($url);
+            $tmpFilename = self::tempFilePath('profile_', $ext);
 
-            if (@file_put_contents($path, $response) !== false) {
-                $this->resizeImage($path);
+            if (@file_put_contents($tmpFilename, $response) !== false) {
+                ImageProcessor::resizeImage($tmpFilename);
 
-                $this->updateProfilePhoto(new UploadedFile($path, $origName));
+                $this->updateProfilePhoto(new UploadedFile($tmpFilename, $origName));
 
-                @unlink($path);
+                @unlink($tmpFilename);
             }
         }
     }
 
-    private static function tempFilePath(string $origExtension): string
+    /**
+     * @return array<string>
+     */
+    private function getFilenameFromUrl(string $url): array
+    {
+        $filename = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_BASENAME);
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        if (blank($ext)) {
+            $ext = 'jpg';
+        }
+
+        return [$filename, $ext];
+    }
+
+    private static function tempFilePath(string $prefix, string $extension): string
     {
         while (true) {
-            $path = sys_get_temp_dir() . '/' . uniqid(mt_rand(), true) . '.' . $origExtension;
+            $path = sys_get_temp_dir() . '/' . uniqid(sprintf('%s%d', $prefix, mt_rand()), true) . '.' . $extension;
             if (!file_exists($path)) {
                 return $path;
             }
         }
-    }
-
-    private function resizeImage(string $path): void
-    {
-        $size = $this->profilePhotoDimensions();
-
-        if (!Features::resizeProfilePhoto() || $size < 24) {
-            return;
-        }
-
-        $img = Image::make($path);
-        if ($img->height() > $size || $img->width() > $size) {
-            $img->resize($size, $size, fn ($cons) => $cons->aspectRatio());
-            $img->save();
-        }
-    }
-
-    protected function profilePhotoDimensions(): int
-    {
-        return (int) sa_config('profile_photo.dimensions', 180);
     }
 }
