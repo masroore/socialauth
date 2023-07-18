@@ -4,6 +4,7 @@ namespace Masroore\SocialAuth\Services;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Contracts\User as OAuthUserContract;
 use Masroore\SocialAuth\SocialAuth;
@@ -49,7 +50,7 @@ final class UserManager
 
     public static function createUserFromSocialite(OAuthUserContract $providerUser, array $extraAttributes = []): Model
     {
-        /** @var array<string, string> $attributes */
+        /** @var array<string, mixed> $attributes */
         $attributes = [
             'name' => SocialAuth::getSocialUserName($providerUser),
             'email' => $providerUser->getEmail(),
@@ -57,6 +58,6 @@ final class UserManager
         ];
         $attributes = array_merge($attributes, $extraAttributes);
 
-        return User::forceCreate($attributes);
+        return self::getUserModelClass()::forceCreate($attributes);
     }
 }
