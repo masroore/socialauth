@@ -12,57 +12,22 @@ class SocialAuthServiceProvider extends ServiceProvider
         $package
             ->name(SocialAuth::PACKAGE_NAME)
             ->hasConfigFile()
-            ->hasTranslations()
-            ->hasViews()
+            // ->hasTranslations()
+            // ->hasViews()
             ->hasRoute('web')
             ->hasMigration('create_social_accounts_table');
     }
 
     /**
-     * Bootstrap the application services.
-     */
-    public function boot(): void
-    {
-        // Optional methods to load your package assets
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'socialauth');
-        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'socialauth');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
-
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../config/config.php' => config_path(SocialAuth::PACKAGE_NAME . '.php'),
-            ], 'config');
-
-            // Publishing the views.
-            /*$this->publishes([
-                __DIR__.'/../resources/views' => resource_path('views/vendor/socialauth'),
-            ], 'views');*/
-
-            // Publishing assets.
-            /*$this->publishes([
-                __DIR__.'/../resources/assets' => public_path('vendor/socialauth'),
-            ], 'assets');*/
-
-            // Publishing the translation files.
-            /*$this->publishes([
-                __DIR__.'/../resources/lang' => resource_path('lang/vendor/socialauth'),
-            ], 'lang');*/
-
-            // Registering package commands.
-            // $this->commands([]);
-        }
-    }
-
-    /**
      * Register the application services.
      */
-    public function register(): void
+    public function packageRegistered(): void
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', SocialAuth::PACKAGE_NAME);
+        $this->mergeConfigFrom(__DIR__ . '/../config/socialauth.php', SocialAuth::PACKAGE_NAME);
 
         // Register the main class to use with the facade
         $this->app->singleton(SocialAuth::PACKAGE_NAME, fn () => new SocialAuth());
+        $this->app->bind(SocialAuth::PACKAGE_NAME, SocialAuth::class);
     }
 }
