@@ -50,7 +50,7 @@ class SocialAuthController extends Controller
         }
     }
 
-    public function handleProviderCallback(Request $request, string $provider): Response|RedirectResponse|LoginResponse
+    public function processCallback(Request $request, string $provider): Response|RedirectResponse|LoginResponse
     {
         $provider = SocialAuth::sanitizeProviderName($provider);
         $this->checkProviderConfiguration($provider);
