@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
 use Masroore\SocialAuth\Exceptions\ProviderNotConfigured;
-use Masroore\SocialAuth\Facades\SocialAuth;
 use Masroore\SocialAuth\Http\Responses\LoginResponse;
+use Masroore\SocialAuth\SocialAuth;
 use Masroore\SocialAuth\Support\Features;
 use Masroore\SocialAuth\Support\OAuthMessageBag;
 use Masroore\SocialAuth\Support\Providers;
@@ -33,7 +33,7 @@ class SocialAuthController extends Controller
         }
         */
 
-        $scopes = SocialAuth::getProviderScopes($provider);
+        $scopes = Providers::getProviderScopes($provider);
         if (!blank($scopes)) {
             return Socialite::with($provider)
                 ->scopes($scopes)
