@@ -6,20 +6,17 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Contracts\User as OAuthUserContract;
 use Laravel\Socialite\Facades\Socialite;
 use Masroore\SocialAuth\Events\Login;
-use Masroore\SocialAuth\Exceptions\ProviderNotConfigured;
 use Masroore\SocialAuth\Http\Responses\LoginResponse;
 use Masroore\SocialAuth\Models\SocialAccount;
 use Masroore\SocialAuth\Services\UserManager;
 use Masroore\SocialAuth\Support\Features;
 use Masroore\SocialAuth\Support\ManagesSocialAvatarSize;
 use Masroore\SocialAuth\Support\OAuthMessageBag;
-use Masroore\SocialAuth\Support\Providers;
 use Masroore\SocialAuth\Support\Routes;
 
 final class SocialAuth
@@ -255,12 +252,12 @@ final class SocialAuth
         return self::loginUser($user);
     }
 
-    public static function createNewUserFromProvider(string $provider, OAuthUserContract $providerUser): User
+    public static function createNewUserFromProvider(string $provider, OAuthUserContract $providerUser): Model
     {
         return DB::transaction(static function () use ($provider, $providerUser) {
             return tap(
                 UserManager::createUserFromSocialite($providerUser),
-                static function (User $user) use ($provider, $providerUser): void {
+                static function (Model $user) use ($provider, $providerUser): void {
                     if (Features::profilePhoto() && $providerUser->getAvatar()) {
                         $user->setProfilePhotoFromUrl($providerUser->getAvatar());
                     }
@@ -279,54 +276,13 @@ final class SocialAuth
         $socialAccount->forceFill($attributes)->save();
     }
 
-    public static function getProviderScopes(string $provider): string|array
+    public function getDomainAllowList(): array
     {
-        return self::getProviderConfig($provider)['scopes'] ?? [];
-    }
-
-    public static function getProviderConfig(string $provider): array
-    {
-        if (!self::isProviderConfigured($provider)) {
-            throw ProviderNotConfigured::make($provider);
-        }
-
-        return config()->get('services.' . $provider);
-    }
-
-    /**
-     * Check if provider is configured.
-     */
-    public static function isProviderConfigured(string $provider): bool
-    {
-        // return in_array(self::sanitizeProviderName($provider), self::providers(), true);
-        return config()->has('services.' . self::sanitizeProviderName($provider));
-    }
-
-    /**
-     * Determine which providers the application supports.
-     */
-    public static function providers(): Collection
-    {
-        return Providers::getProviders();
-    }
-
-    public function getUserModel(): Model
-    {
-        return new ($this->getUserModelClass());
-    }
-
-    public function getUserModelClass(): string
-    {
-        return $this->getConfig()['user_model'] ?? \App\Models\User::class;
+        return $this->getConfig()['domain_allowlist'] ?? [];
     }
 
     public function getConfig(): array
     {
         return config(self::PACKAGE_NAME, []);
-    }
-
-    public function getDomainAllowList(): array
-    {
-        return $this->getConfig()['domain_allowlist'] ?? [];
     }
 }

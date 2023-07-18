@@ -14,7 +14,13 @@ return [
 
     'users_table' => 'users',
 
-    'email_column' => 'email',
+    'columns' => [
+        'name' => 'name',
+        'email' => 'email',
+        'password' => 'password',
+        'avatar_url' => 'avatar_url',
+        'email_verified_at' => 'email_verified_at',
+    ],
 
     // Allow login, and registration if enabled, for users with an email for one of the following domains.
     // All domains allowed by default

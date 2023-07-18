@@ -4,6 +4,7 @@ namespace Masroore\SocialAuth\Support;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Masroore\SocialAuth\Exceptions\ProviderNotConfigured;
 use Masroore\SocialAuth\SocialAuth;
 
 final class Providers
@@ -60,5 +61,28 @@ final class Providers
     public static function enabled(string $provider): bool
     {
         return self::getProviders()->has(SocialAuth::sanitizeProviderName($provider));
+    }
+
+    public static function getProviderConfig(string $provider): array
+    {
+        if (!self::isProviderConfigured($provider)) {
+            throw ProviderNotConfigured::make($provider);
+        }
+
+        return config()->get('services.' . $provider);
+    }
+
+    public static function getProviderScopes(string $provider): string|array
+    {
+        return self::getProviderConfig($provider)['scopes'] ?? [];
+    }
+
+    /**
+     * Check if provider is configured.
+     */
+    public static function isProviderConfigured(string $provider): bool
+    {
+        // return in_array(self::sanitizeProviderName($provider), self::providers(), true);
+        return config()->has('services.' . SocialAuth::sanitizeProviderName($provider));
     }
 }
