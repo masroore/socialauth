@@ -1,9 +1,8 @@
 <?php
 
-namespace Masroore\SocialAuth\Services\Traits;
+namespace Masroore\SocialAuth\Support;
 
 use Laravel\Socialite\Contracts\User as OAuthUserContract;
-use Masroore\SocialAuth\Services\Providers;
 use Masroore\SocialAuth\SocialAuth;
 
 trait ManagesSocialAvatarSize

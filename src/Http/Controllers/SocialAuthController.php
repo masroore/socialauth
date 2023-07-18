@@ -13,8 +13,8 @@ use Masroore\SocialAuth\Exceptions\ProviderNotConfigured;
 use Masroore\SocialAuth\Facades\SocialAuth;
 use Masroore\SocialAuth\Http\Responses\LoginResponse;
 use Masroore\SocialAuth\RedirectPath;
-use Masroore\SocialAuth\Services\Features;
-use Masroore\SocialAuth\Services\OAuthMessageBag;
+use Masroore\SocialAuth\Support\Features;
+use Masroore\SocialAuth\Support\OAuthMessageBag;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 
 class SocialAuthController extends Controller

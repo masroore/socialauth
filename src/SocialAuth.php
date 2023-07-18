@@ -14,11 +14,11 @@ use Masroore\SocialAuth\Events\Login;
 use Masroore\SocialAuth\Exceptions\ProviderNotConfigured;
 use Masroore\SocialAuth\Http\Responses\LoginResponse;
 use Masroore\SocialAuth\Models\SocialAccount;
-use Masroore\SocialAuth\Services\Features;
-use Masroore\SocialAuth\Services\OAuthMessageBag;
-use Masroore\SocialAuth\Services\Providers;
-use Masroore\SocialAuth\Services\Traits\ManagesSocialAvatarSize;
 use Masroore\SocialAuth\Services\UserManager;
+use Masroore\SocialAuth\Support\Features;
+use Masroore\SocialAuth\Support\ManagesSocialAvatarSize;
+use Masroore\SocialAuth\Support\OAuthMessageBag;
+use Masroore\SocialAuth\Support\Providers;
 
 final class SocialAuth
 {

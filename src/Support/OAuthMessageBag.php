@@ -1,6 +1,6 @@
 <?php
 
-namespace Masroore\SocialAuth\Services;
+namespace Masroore\SocialAuth\Support;
 
 use Illuminate\Support\MessageBag;
 use Masroore\SocialAuth\SocialAuth;

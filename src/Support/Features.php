@@ -1,6 +1,6 @@
 <?php
 
-namespace Masroore\SocialAuth\Services;
+namespace Masroore\SocialAuth\Support;
 
 use Masroore\SocialAuth\Enums\Feature;
 use Masroore\SocialAuth\SocialAuth;

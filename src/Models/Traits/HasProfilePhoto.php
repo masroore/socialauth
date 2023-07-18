@@ -5,8 +5,8 @@ namespace Masroore\SocialAuth\Models\Traits;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Masroore\SocialAuth\Services\Features;
 use Masroore\SocialAuth\SocialAuth;
+use Masroore\SocialAuth\Support\Features;
 
 trait HasProfilePhoto
 {
