@@ -14,6 +14,7 @@ use Masroore\SocialAuth\Facades\SocialAuth;
 use Masroore\SocialAuth\Http\Responses\LoginResponse;
 use Masroore\SocialAuth\Support\Features;
 use Masroore\SocialAuth\Support\OAuthMessageBag;
+use Masroore\SocialAuth\Support\Providers;
 use Masroore\SocialAuth\Support\Routes;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 
@@ -44,7 +45,7 @@ class SocialAuthController extends Controller
 
     private function checkProviderConfiguration(string $provider): void
     {
-        if (!SocialAuth::isProviderConfigured($provider)) {
+        if (!Providers::isProviderConfigured($provider)) {
             throw ProviderNotConfigured::make($provider);
         }
     }
@@ -53,7 +54,6 @@ class SocialAuthController extends Controller
     {
         $provider = SocialAuth::sanitizeProviderName($provider);
         $this->checkProviderConfiguration($provider);
-
         $redirect = $this->checkErrors($request);
 
         if ($redirect instanceof RedirectResponse) {
@@ -75,16 +75,11 @@ class SocialAuthController extends Controller
             return null;
         }
 
-        if (Auth::check()) {
-            flash()->warning($request->get('error_description'));
+        $errors = OAuthMessageBag::make($request->get('error_description'));
 
-            return redirect(Routes::redirect('login', 'login'));
-        }
+        $redirectRoute = Auth::check() ? 'login' : (Features::registration() ? 'register' : 'login');
 
-        $messageBag = OAuthMessageBag::make($request->get('error_description'));
-        $redirectRoute = Features::registration() ? 'register' : 'login';
-
-        return redirect()->route(Routes::redirect($redirectRoute, $redirectRoute))->withErrors($messageBag);
+        return redirect()->route(Routes::redirect($redirectRoute, $redirectRoute))->withErrors($errors);
     }
 
     /**
