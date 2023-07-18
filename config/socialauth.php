@@ -25,7 +25,10 @@ return [
     // Allow login, and registration if enabled, for users with an email for one of the following domains.
     // All domains allowed by default
     // Only use lower case
-    'allowed_domains' => [],
+    'domains' => [
+        'allowed' => [],
+        'banned' => [],
+    ],
 
     'profile_photo_disk' => 'public',
 
