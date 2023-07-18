@@ -12,7 +12,7 @@ return new class() extends Migration {
     {
         Schema::create('social_accounts', static function (Blueprint $table): void {
             $table->id();
-            $table->foreignIdFor(User::class, 'user_id')->index();
+            $table->foreignIdFor(config('socialauth.user_model'), 'user_id')->index();
             $table->string('provider');
             $table->string('provider_id');
             $table->string('name')->nullable();
