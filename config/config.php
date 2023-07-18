@@ -12,6 +12,10 @@ return [
 
     'user_model' => \App\Models\User::class,
 
+    'users_table' => 'users',
+
+    'email_column' => 'email',
+
     // Allow login, and registration if enabled, for users with an email for one of the following domains.
     // All domains allowed by default
     // Only use lower case
