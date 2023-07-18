@@ -2,10 +2,10 @@
 
 namespace Masroore\SocialAuth;
 
-use Illuminate\Support\ServiceProvider;
 use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class SocialAuthServiceProvider extends ServiceProvider
+class SocialAuthServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
@@ -24,7 +24,7 @@ class SocialAuthServiceProvider extends ServiceProvider
     public function packageRegistered(): void
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__ . '/../config/socialauth.php', SocialAuth::PACKAGE_NAME);
+        // $this->mergeConfigFrom(__DIR__ . '/../config/socialauth.php', SocialAuth::PACKAGE_NAME);
 
         // Register the main class to use with the facade
         $this->app->singleton(SocialAuth::PACKAGE_NAME, fn () => new SocialAuth());
