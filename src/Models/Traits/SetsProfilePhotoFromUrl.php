@@ -33,12 +33,7 @@ trait SetsProfilePhotoFromUrl
 
     private static function tempFilePath(): string
     {
-        while (true) {
-            $path = tempnam(sys_get_temp_dir(), uniqid(mt_rand(), true));
-            if (!file_exists($path)) {
-                return $path;
-            }
-        }
+        return tempnam(sys_get_temp_dir(), uniqid(mt_rand(), true));
     }
 
     private function resizeImage(string $path): void
