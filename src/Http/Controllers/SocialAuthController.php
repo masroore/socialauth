@@ -12,9 +12,9 @@ use Laravel\Socialite\Two\InvalidStateException;
 use Masroore\SocialAuth\Exceptions\ProviderNotConfigured;
 use Masroore\SocialAuth\Facades\SocialAuth;
 use Masroore\SocialAuth\Http\Responses\LoginResponse;
-use Masroore\SocialAuth\RedirectPath;
 use Masroore\SocialAuth\Support\Features;
 use Masroore\SocialAuth\Support\OAuthMessageBag;
+use Masroore\SocialAuth\Support\RedirectPath;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 
 class SocialAuthController extends Controller

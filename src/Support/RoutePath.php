@@ -1,6 +1,8 @@
 <?php
 
-namespace Masroore\SocialAuth;
+namespace Masroore\SocialAuth\Support;
+
+use Masroore\SocialAuth\SocialAuth;
 
 final class RoutePath
 {
