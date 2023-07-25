@@ -37,7 +37,7 @@ final class Features
         return self::enabled(Feature::MarkEmailVerified->value);
     }
 
-    public static function profilePhoto(): bool
+    public static function managesProfilePhotos(): bool
     {
         return self::enabled(Feature::ProfilePhoto->value);
     }

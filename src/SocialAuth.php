@@ -257,7 +257,7 @@ final class SocialAuth
             return tap(
                 UserManager::createUserFromSocialite($providerUser),
                 static function (Model $user) use ($provider, $providerUser): void {
-                    if (Features::profilePhoto() && $providerUser->getAvatar()) {
+                    if (Features::managesProfilePhotos() && $providerUser->getAvatar()) {
                         $user->setProfilePhotoFromUrl($providerUser->getAvatar());
                     }
 
