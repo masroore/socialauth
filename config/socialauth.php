@@ -33,6 +33,7 @@ return [
     'profile_photo' => [
         'disk' => 'public',
         'dimensions' => 180,
+        'quality' => 70,
     ],
 
     'providers' => [
