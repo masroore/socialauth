@@ -18,7 +18,7 @@ return [
         'name' => 'name',
         'email' => 'email',
         'password' => 'password',
-        'profile_photo' => 'profile_photo',
+        'profile_photo_path' => 'profile_photo_path',
         'email_verified_at' => 'email_verified_at',
     ],
 
@@ -34,6 +34,9 @@ return [
         'disk' => 'public',
         'dimensions' => 180,
         'quality' => 70,
+        'color' => 'fff',
+        'background' => '0D8ABC',
+        'length' => 2,
     ],
 
     'providers' => [
