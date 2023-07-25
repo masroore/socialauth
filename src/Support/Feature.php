@@ -1,6 +1,6 @@
 <?php
 
-namespace Masroore\SocialAuth\Enums;
+namespace Masroore\SocialAuth\Support;
 
 enum Feature: string
 {

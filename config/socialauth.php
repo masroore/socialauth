@@ -1,6 +1,6 @@
 <?php
 
-use Masroore\SocialAuth\Enums\Feature;
+use Masroore\SocialAuth\Support\Feature;
 
 return [
 

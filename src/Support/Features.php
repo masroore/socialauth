@@ -2,8 +2,6 @@
 
 namespace Masroore\SocialAuth\Support;
 
-use Masroore\SocialAuth\Enums\Feature;
-
 final class Features
 {
     public static function generateMissingEmails(): bool
